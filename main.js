@@ -77,18 +77,20 @@ eval  <text> - evaluate text as javascript
                 x.outputter.writeLine(line);
             }
         },
-        eval (x, code) {
-            const consoleLog = (...a) => {
+        async eval (x, code) {
+            const output = (...a) => {
                 x.outputter.writeLine(a.join(' '));
             }
             const cmethods = ['log', 'warn', 'error'];
             const rmethods = {};
             for ( const name of cmethods ) {
                 rmethods[name] = console[name];
-                console[name] = consoleLog;
+                console[name] = output;
             }
             const cloud = this.cloud;
-            eval(code);
+            await (async () => {
+                eval(code);
+            })()
             for ( const name of cmethods ) {
                 console[name] = rmethods[name];
             }
